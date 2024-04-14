@@ -1,0 +1,105 @@
+\documentclass[a4paper, 11pt]{article}
+\usepackage{comment} % enables the use of multi-line comments (\ifx \fi) 
+\usepackage{lipsum} %This package just generates Lorem Ipsum filler text. 
+\usepackage{fullpage} % changes the margin
+\usepackage[a4paper, total={7in, 10in}]{geometry}
+\usepackage[fleqn]{amsmath}
+\usepackage{amssymb,amsthm}  % assumes amsmath package installed
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\usepackage{verbatim}
+\usepackage[numbered]{mcode}
+\usepackage{float}
+\usepackage{tikz}
+    \usetikzlibrary{shapes,arrows}
+    \usetikzlibrary{arrows,calc,positioning}
+
+    \tikzset{
+        block/.style = {draw, rectangle,
+            minimum height=1cm,
+            minimum width=1.5cm},
+        input/.style = {coordinate,node distance=1cm},
+        output/.style = {coordinate,node distance=4cm},
+        arrow/.style={draw, -latex,node distance=2cm},
+        pinstyle/.style = {pin edge={latex-, black,node distance=2cm}},
+        sum/.style = {draw, circle, node distance=1cm},
+    }
+\usepackage{xcolor}
+\usepackage{mdframed}
+\usepackage[shortlabels]{enumitem}
+\usepackage{indentfirst}
+\usepackage{hyperref}
+    
+\renewcommand{\thesubsection}{\thesection.\alph{subsection}}
+
+\newenvironment{problem}[2][Problem]
+    { \begin{mdframed}[backgroundcolor=gray!20] \textbf{#1 #2} \\}
+    {  \end{mdframed}}
+
+% Define solution environment
+\newenvironment{solution}
+    {\textit{Solution:}}
+    {}
+
+\renewcommand{\qed}{\quad\qedsymbol}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%Header-Make sure you update this information!!!!
+\noindent
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\large\textbf{Your name} \hfill \textbf{Homework - \#}   \\
+Email: youremail@case.edu \hfill ID: 123456789 \\
+\normalsize Course: CSDS 337 - Compiler Design \hfill Term: Spring 2024\\
+Instructor: Dr. Vipin Chaudhary \hfill Due Date: $10^{th}$ April, 2024 \\ \\
+Number of hours delay for this Programming Assignment: \hfill Put hours here\\
+Cumulative number of hours delay so far: \hfill Put hours here \\ \\
+I discussed this homework with: \hfill Put names here \\
+\noindent\rule{7in}{2.8pt}
+
+%\large\textbf{More information is available in the README.md file. } \\
+
+%\large\textbf{Abstract Syntax Trees} \\
+%LLVM is a powerful framework that allows you to generate and even execute code. In this assignment, we will look at the basics of programming with LLVM. This is by no means a complete guide, but our hope is that you get an understanding on how LLVM works and can use this as a base for future LLVM-related projects. \\
+
+\large\textbf{Assignment} \\
+For this assignment, you're given partially completed code of a compiler which uses an abstract syntax tree; your job is to complete it. By the end, you will have a fully functional compiler. You will need to fill in certain parts of the AST code and parts of the parser which generates the AST. Both of these should be somewhat familiar: the parser is very similar to the one you wrote in PG-2 (the only difference is that code actions now generate an AST). The AST itself uses LLVM for code generation, which should be familiar from PG-3.
+
+\begin{problem}{1}
+  Fill in code actions for the following nonterminals in \verb|src/frontent/parser.y|:
+  \begin{itemize}
+  \item \verb|type| (5 pts)
+  \item \verb|funDef| (15 pts)
+  \item \verb|selStmt| (5 pts)
+  \item \verb|iterStmt| (for this one, you also should modify the grammar to support for loops) (10 pts)
+  \item \verb|jumpStmt| (5 pts)
+  \item \verb|expr| (5 pts)
+  \item \verb|andExpr| (5 pts)
+  \end{itemize}
+  All of the other code actions have been done for you, so you can use them as examples. When you are finished with this, all grammar productions in the parser should have a code action. See the comments in \verb|parser.y| for more information, guidelines, and hints.
+\end{problem}
+
+\begin{problem}{2}
+	Fill in the following parts of the AST (note that you may need to finish all for compiling to work). By running the \verb|./executeTests.sh| script, you can compile and run all the samples in the \verb|tests| folder. You should add your own to test your compiler changes. You also may need to declare header files for their corresponding C++ files if they do not exist:
+	\begin{itemize}
+	\item \verb|expressions/sub.cpp| (3 pts)
+	\item \verb|expressions/bool2Int.h| (2 pts)
+	\item \verb|expressions/comparison.cpp| (3 pts)
+	\item \verb|expressions/int2Bool.cpp| (3 pts)
+	\item \verb|expressions/multiplication.cpp| (3 pts)
+	\item \verb|expressions/division.cpp| (3 pts)
+	\item \verb|expressions/negative.cpp| (3 pts)
+	\item \verb|expressions/bool.cpp| (5 pts)
+	\item \verb|expressions/and.cpp| (10 pts, make sure to not evaluate 2nd arg if 1st is false. Also, NO STACK ALLOCATIONS ARE ALLOWED HERE!)
+	\item \verb|statements/for.cpp| (15 pts)
+	\end{itemize}
+	Documentation on the structure of the AST and more info about each part is available in the README file.
+\end{problem}
+
+%\lstinputlisting{SampleCode.m}
+\noindent\rule{7in}{2.8pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+ 
