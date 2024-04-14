@@ -1,0 +1,7 @@
+DECLARE FUNCTION add (a AS INTEGER, b AS SINGLE)
+
+FUNCTION add (a AS INTEGER, b AS SINGLE)
+    add = a + b
+END FUNCTION
+
+PRINT add(3, 7.0)
