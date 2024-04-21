@@ -10,6 +10,7 @@ static std::stringstream ss;
 %x strlit
 
 %%
+[ \t\n]               ;  /* Ignores Whitespace */
 "int"                     {return INT_TYPE;}
 "float"                   {return FLOAT_TYPE;}
 "string"                  {return STRING_TYPE;}
