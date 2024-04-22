@@ -36,6 +36,7 @@ static std::stringstream ss;
 "FOR"                     {return FOR;}
 "NEXT"                    {return NEXT;} // Added for BASIC
 "TO"                      {return TO;} // Added for BASIC
+"AS"                      {return AS;} // Added for BASIC
 "STEP"                    {return STEP;} // Added for BASIC
 "BREAK"                   {return BREAK;}
 "RETURN"                  {return RETURN;}

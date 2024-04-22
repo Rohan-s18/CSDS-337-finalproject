@@ -66,7 +66,7 @@ extern FILE *yyin;
 }
 
 %token ID BOOL_TYPE INT_TYPE FLOAT_TYPE STRING_TYPE VOID_TYPE 
-%token LET DECLARATION FUNCTION
+%token LET DECLARE FUNCTION AS
 %token COLON SEMICOLON LPAREN RPAREN COMMA LBRACE RBRACE 
 %token IF THEN ELSE ENDIF WHILE WEND FOR NEXT TO STEP BREAK RETURN 
 %token EQUALS_SIGN LOGICAL_OR LOGICAL_AND LOGICAL_NOT RELOP_GT RELOP_LT RELOP_GE RELOP_LE RELOP_EQ RELOP_NE 
@@ -131,21 +131,73 @@ varDecs: varDecs varDec SEMICOLON {
   $$ = new std::vector<ASTFunctionParameter *>();
  }; */
 
-
-funDec: type ID LPAREN params RPAREN SEMICOLON {
-  //create the parameters
+// E.g., DECLARE FUNCTION add (a AS INTEGER, b AS SINGLE) AS INTEGER
+// TODO: adjust params to allow "AS type"
+funDec: DECLARE FUNCTION ID LPAREN params RPAREN AS type{
   auto parameters = ASTFunctionParameters();
   bool variadic = false;
-  for(auto p : *$4) {
+  for(auto p : *$5) { //params
     /* The AST uses unique pointers for memory purposes, but bison doesn't work well with those, so the parser uses plain C-style pointers.
      * To account for this, make sure to dereference the pointers before using. */
     if (p) parameters.push_back(std::move(*p));
     else variadic = true;
   }
   //then make the function
-  auto f = ast.AddFunction($2, std::unique_ptr<VarType>($1), std::move(parameters), variadic);
+  auto f = ast.AddFunction($3, std::unique_ptr<VarType>($8), std::move(parameters), variadic); //ID, type
 };
 
+/* FROM C COMPILER
+funDec: type ID LPAREN params RPAREN SEMICOLON {
+  //create the parameters
+  auto parameters = ASTFunctionParameters();
+  bool variadic = false;
+  for(auto p : *$4) {
+    // The AST uses unique pointers for memory purposes, but bison doesn't work well with those, so the parser uses plain C-style pointers.
+    // To account for this, make sure to dereference the pointers before using.
+    if (p) parameters.push_back(std::move(*p));
+    else variadic = true;
+  }
+  //then make the function
+  auto f = ast.AddFunction($2, std::unique_ptr<VarType>($1), std::move(parameters), variadic);
+}; */
+
+/* E.g., BASIC Function Definition
+FUNCTION add (a AS INTEGER, b AS SINGLE)
+    add = a + b
+END FUNCTION 
+*/
+funDef: FUNCTION ID LPAREN params RPAREN AS type varDecs stmts {
+  /* Fill in this block. (This will be the largest one)
+   * You can follow these steps to create the function and assign its behavior correctly:
+   * - First, change the vector "stmts" into an ASTStatementBlock (this will need to be a unique pointer).
+   * - Then, create the parameters and make the function, as above.
+   * - Add the variables in "varDecs" to the function as stack variables.
+   * - Define the function by the ASTStatementBlock. */
+
+  auto statements = new ASTStatementBlock();
+  //change into block
+  for(auto s : *$9){ //stmts
+    statements->statements.push_back(std::unique_ptr<ASTStatement>(s));
+  }
+  //parameters and variadic assigned
+  auto parameters = ASTFunctionParameters();
+  bool variadic = false;
+
+  //keep going until can't add more then make variadic true
+  for(auto p: *$4){ //params
+    if (p) parameters.push_back(std::move(*p));
+    else variadic = true;
+  }
+  //function stack variable
+  auto f = ast.AddFunction($2, std::unique_ptr<VarType>($7), std::move(parameters), variadic); //ID, type
+  for(auto p: *$8){ //varDecs
+    f->AddStackVar(std::move(*p));
+  }
+  //use define
+  f->Define(std::unique_ptr<ASTStatement>(statements));
+ };
+
+/* FROM C COMPILER
 funDef: type ID LPAREN params RPAREN LBRACE varDecs stmts RBRACE {
   auto statements = new ASTStatementBlock();
   //change into block
@@ -168,17 +220,12 @@ funDef: type ID LPAREN params RPAREN LBRACE varDecs stmts RBRACE {
   }
   //use define
   f->Define(std::unique_ptr<ASTStatement>(statements));
+ }; */
 
-
-//TODO: Rest Below///////////////////////////////////////////////////////////////////////////////////////////
-  /* Fill in this block. (This will be the largest one)
-   * You can follow these steps to create the function and assign its behavior correctly:
-   * - First, change the vector "stmts" into an ASTStatementBlock (this will need to be a unique pointer).
-   * - Then, create the parameters and make the function, as above.
-   * - Add the variables in "varDecs" to the function as stack variables.
-   * - Define the function by the ASTStatementBlock. */
- };
+ //TODO: Rest Below///////////////////////////////////////////////////////////////////////////////////////////
+  
 params: paramList | {$$ = new std::vector<ASTFunctionParameter *>();};
+
 paramList: paramList COMMA type ID { // This works similarly to varDecs
   $$ = $1;
   $$->push_back(new ASTFunctionParameter(std::unique_ptr<VarType>($3), $4));
@@ -197,12 +244,14 @@ stmt: exprStmt {$$ = $1;} | LBRACE stmts RBRACE {
     statements->statements.push_back(std::unique_ptr<ASTStatement>(s));
   }
   $$ = statements;
- }| selStmt {$$ = $1;} | iterStmt {$$ = $1;} | jumpStmt {$$ = $1;} ; // Strictly speaking, these {$$ = $1}sare unnecessary (bison does it for you).
+ }| selStmt {$$ = $1;} | iterStmt {$$ = $1;} | jumpStmt {$$ = $1;} ; // Strictly speaking, these {$$ = $1}'s are unnecessary (bison does it for you).
+
 exprStmt: expr SEMICOLON {
   $$ = $1; //implicit cast expr -> stmt
  } | SEMICOLON {
   $$ = new ASTStatementBlock(); //empty statement = empty block
  };
+
 stmts: stmts stmt {
   //Here, we just place the statements into a vector. They'll be added to the AST in a parent's code action.
   $$ = $1;
@@ -210,6 +259,7 @@ stmts: stmts stmt {
  }| {
   $$ = new std::vector<ASTStatement *>();
  };
+
 selStmt: IF LPAREN expr RPAREN stmt {
   $$ = new ASTStatementIf(std::unique_ptr<ASTExpression>($3), std::unique_ptr<ASTStatement>($5), std::unique_ptr<ASTStatement>(nullptr));
  } | IF LPAREN expr RPAREN stmt ELSE stmt {
@@ -218,14 +268,12 @@ selStmt: IF LPAREN expr RPAREN stmt {
  };
 
 iterStmt: WHILE LPAREN expr RPAREN stmt {
-  /* fill in */
   $$ = new ASTStatementWhile(std::unique_ptr<ASTExpression>($3), std::unique_ptr<ASTStatement>($5));
  } | FOR LPAREN stmt COMMA expr COMMA stmt RPAREN stmt {
   $$ = new ASTStatementFor(std::unique_ptr<ASTStatement>($9), std::unique_ptr<ASTStatement>($3), std::unique_ptr<ASTExpression>($5), std::unique_ptr<ASTStatement>($7));
  };
 
-/* fill in grammar and code action for for-loops */
-
+/* TODO: Remove SEMICOLONS here, and change ordering to try and match longest sequence first */
 jumpStmt: RETURN SEMICOLON {
   auto retStmt = new ASTStatementReturn();
   retStmt->returnExpression = std::unique_ptr<ASTExpression>(nullptr);
@@ -236,29 +284,34 @@ jumpStmt: RETURN SEMICOLON {
     retStmt->returnExpression = std::unique_ptr<ASTExpression>($2);
     $$ = retStmt;
  } | BREAK SEMICOLON {
-    //implemented new break class
+    //implemented new break class - yay!
     $$ = new ASTStatementBreak();
- }; /* There should also be break statements here, but they are not implemented in the AST */
+ }; /* TODO: There should also be break statements here, but they are not implemented in the AST */
 
 expr: orExpr { $$ = $1;} | ID EQUALS_SIGN expr {
   /* fill in (create an ASTExpressionAssignment) */
   //use create for first, unique for second
   $$ = new ASTExpressionAssignment(ASTExpressionVariable::Create($1), std::unique_ptr<ASTExpression>($3));
  };
+
 orExpr: andExpr {$$ = $1;} | orExpr LOGICAL_OR andExpr {
   $$ = new ASTExpressionOr(std::unique_ptr<ASTExpression>($1), std::unique_ptr<ASTExpression>($3));
  };
+
 andExpr: unaryRelExpr {$$ = $1;} | andExpr LOGICAL_AND unaryRelExpr {
   /* fill in */
   $$ = new ASTExpressionAnd(std::unique_ptr<ASTExpression>($1), std::unique_ptr<ASTExpression>($3));
  };
+
 unaryRelExpr: LOGICAL_NOT unaryRelExpr {
   //logical not isn't implmented in ast, so we just don't do anything
   $$ = $2;
  } | relExpr {$$ = $1;};
+
 relExpr: term relop term {
   $$ = new ASTExpressionComparison($2, std::unique_ptr<ASTExpression>($1), std::unique_ptr<ASTExpression>($3));
  } | term {$$ = $1;};
+
 relop: RELOP_GT {
   $$ = ASTExpressionComparisonType::GreaterThan;
  }| RELOP_LT {
@@ -272,11 +325,13 @@ relop: RELOP_GT {
  }| RELOP_NE {
   $$ = ASTExpressionComparisonType::NotEqual;
  };
+
 term: factor {$$ = $1;}| term ARITH_PLUS factor {
   $$ = new ASTExpressionAddition(std::unique_ptr<ASTExpression>($1), std::unique_ptr<ASTExpression>($3));
  }| term ARITH_MINUS factor {
   $$ = new ASTExpressionSubtraction(std::unique_ptr<ASTExpression>($1), std::unique_ptr<ASTExpression>($3));
  };
+
 factor: primary {$$ = $1;} | factor ARITH_MULT primary {
   $$ = new ASTExpressionMultiplication(std::unique_ptr<ASTExpression>($1), std::unique_ptr<ASTExpression>($3));
  }| factor ARITH_DIV primary {
@@ -285,6 +340,7 @@ factor: primary {$$ = $1;} | factor ARITH_MULT primary {
   //not implemented in AST
   $$ = $1;
  };
+
 primary: ID {
   $$ = new ASTExpressionVariable($1);
  }| LPAREN expr RPAREN {
@@ -294,6 +350,7 @@ primary: ID {
  }| constant {
   $$ = $1;
  };
+
 call: ID LPAREN args RPAREN {
   //convert args to a vector of unique ptrs:
   auto argVec = std::vector<std::unique_ptr<ASTExpression>>();
@@ -312,6 +369,7 @@ call: ID LPAREN args RPAREN {
    $$ = new std::vector<ASTExpression *>();
    $$->push_back($1);
  } ;
+
 constant: int_lit {$$ = new ASTExpressionInt($1);} | flt_lit {$$ = new ASTExpressionFloat($1);} | STRING_LITERAL {$$ = new ASTExpressionString(std::string($1));};
 int_lit: INT_LITERAL | ARITH_MINUS INT_LITERAL {$$ = -1 * $2;};
 flt_lit: FLOAT_LITERAL | ARITH_MINUS FLOAT_LITERAL {$$ = -1 * $2;};
