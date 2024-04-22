@@ -1,5 +1,5 @@
 FUNCTION main ()
-    DIM i
+    LET i AS INTEGER
     i = 0
     WHILE i < 8
         PRINT "Loop Iteration: "; i

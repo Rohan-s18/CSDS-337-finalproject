@@ -192,11 +192,9 @@ stmt: exprStmt {$$ = $1;} | EOL stmts EOL { // THESE EOLS are in place of bracke
   $$ = statements;
  }| selStmt {$$ = $1;} | iterStmt {$$ = $1;} | jumpStmt {$$ = $1;} ; // Strictly speaking, these {$$ = $1}'s are unnecessary (bison does it for you).
 
- //TODO: Rest Below///////////////////////////////////////////////////////////////////////////////////////////
-
-exprStmt: expr SEMICOLON { //TODO: not sure how to deal with this rn
+exprStmt: expr EOL { //Replaced SEMICOLON with EOL
   $$ = $1; //implicit cast expr -> stmt
- } | SEMICOLON {
+ } | EOL {
   $$ = new ASTStatementBlock(); //empty statement = empty block
  };
 
@@ -208,20 +206,63 @@ stmts: stmts stmt {
   $$ = new std::vector<ASTStatement *>();
  };
 
-selStmt: IF LPAREN expr RPAREN stmt {
-  $$ = new ASTStatementIf(std::unique_ptr<ASTExpression>($3), std::unique_ptr<ASTStatement>($5), std::unique_ptr<ASTStatement>(nullptr));
- } | IF LPAREN expr RPAREN stmt ELSE stmt {
+/* selStmt = If statement, which has the shape of
+IF condition THEN
+    ' statements to execute if condition is true
+ELSE
+    ' statements to execute if condition is false
+END IF 
+*/
+//NOT SURE IF EOLs ARE CORRECT HERE
+selStmt: IF expr THEN EOL stmt ENDIF { 
+  $$ = new ASTStatementIf(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatement>($5), std::unique_ptr<ASTStatement>(nullptr));
+ } | IF expr THEN EOL stmt ELSE EOL stmt ENDIF {
   /* added something, shouldn't have final nullptr */
-   $$ = new ASTStatementIf(std::unique_ptr<ASTExpression>($3), std::unique_ptr<ASTStatement>($5), std::unique_ptr<ASTStatement>($7));
+   $$ = new ASTStatementIf(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatement>($5), std::unique_ptr<ASTStatement>($8));
  };
 
+/* BASIC - While Loop
+FUNCTION main ()
+    LET i AS INTEGER
+    i = 0
+    WHILE i < 8
+        PRINT "Loop Iteration: "; i
+        i = i + 1
+    WEND
+    main = 0
+END FUNCTION 
+*/
+
+/* BASIC - For Loop 
+DECLARE SUB main()
+
+SUB main()
+    FOR i = 0 TO 7
+        PRINT "Loop Iteration: "; i
+    NEXT i
+END SUB
+
+main */
+
+iterStmt: WHILE expr EOL stmt {
+  $$ = new ASTStatementWhile(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatement>($4));
+ } | FOR stmt TO INT_LITERAL EOL stmt EOL NEXT ID {
+  //TODO, REFACTOR FOR TO SUPPORT THIS
+  //ASTStatementFor() - BODY (stmt), initialize (stmt), condition (expr), increment (stmt)
+  $$ = new ASTStatementFor(std::unique_ptr<ASTStatement>($6), std::unique_ptr<ASTStatement>($3), std::unique_ptr<ASTExpression>($5), std::unique_ptr<ASTStatement>($7));
+ }; //TODO, ADD FOR LOOP SUPPORT FOR: FOR stmt TO INT_LITERAL STEP INT_LITERAL...
+
+/* OLD FOR GRAMMAR IMPLEMENTATION FROM C COMPILER
 iterStmt: WHILE LPAREN expr RPAREN stmt {
   $$ = new ASTStatementWhile(std::unique_ptr<ASTExpression>($3), std::unique_ptr<ASTStatement>($5));
  } | FOR LPAREN stmt COMMA expr COMMA stmt RPAREN stmt {
   $$ = new ASTStatementFor(std::unique_ptr<ASTStatement>($9), std::unique_ptr<ASTStatement>($3), std::unique_ptr<ASTExpression>($5), std::unique_ptr<ASTStatement>($7));
  };
+*/
 
-/* TODO: Remove SEMICOLONS here, and change ordering to try and match longest sequence first */
+
+//TODO: Rest Below///////////////////////////////////////////////////////////////////////////////////////////
+/* TODO: Remove SEMICOLONS here, and potentially change ordering to try and match longest sequence first */
 jumpStmt: RETURN SEMICOLON {
   auto retStmt = new ASTStatementReturn();
   retStmt->returnExpression = std::unique_ptr<ASTExpression>(nullptr);
