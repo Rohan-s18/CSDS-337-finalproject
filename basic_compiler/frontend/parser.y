@@ -206,7 +206,6 @@ iterStmt: WHILE LPAREN expr RPAREN stmt {
 
 /* fill in grammar and code action for for-loops */
 
-
 jumpStmt: RETURN SEMICOLON {
   auto retStmt = new ASTStatementReturn();
   retStmt->returnExpression = std::unique_ptr<ASTExpression>(nullptr);

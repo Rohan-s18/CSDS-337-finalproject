@@ -12,14 +12,17 @@ static std::stringstream ss;
 
 %%
 [ \t\n]               ;  /* Ignores Whitespace */
-"INTEGER"                 {return INT_TYPE;}
+"INTEGER"                 {return INT_TYPE;} // These were adjusted for BASIC
 "FLOAT"                   {return FLOAT_TYPE;}
 "STRING"                  {return STRING_TYPE;}
-"VOID"                    {return VOID_TYPE;} // If needed in BASIC
+"VOID"                    {return VOID_TYPE;} 
+"BOOL"                    {return BOOL_TYPE}
 ";"                       {return SEMICOLON;}
 "("                       {return LPAREN;}
 ")"                       {return RPAREN;}
 ","                       {return COMMA;}
+"{"                       {return LBRACE;}
+"}"                       {return RBRACE;}
 "IF"                      {return IF;}
 "THEN"                    {return THEN;} // Added for BASIC
 "ELSE"                    {return ELSE;}
@@ -33,7 +36,7 @@ static std::stringstream ss;
 "BREAK"                   {return BREAK;}
 "RETURN"                  {return RETURN;}
 "="                       {return EQUALS_SIGN;}
-"OR"                      {return LOGICAL_OR;} // Changed for BASIC
+"OR"                      {return LOGICAL_OR;} // Changed for BASIC (no longer using ||)
 "AND"                     {return LOGICAL_AND;} // Changed for BASIC
 "NOT"                     {return LOGICAL_NOT;} // Changed for BASIC
 ">"                       {return RELOP_GT;}
@@ -47,15 +50,9 @@ static std::stringstream ss;
 "*"                       {return ARITH_MULT;}
 "/"                       {return ARITH_DIV;}
 "MOD"                     {return ARITH_MOD;} // Changed for BASIC
+"..."                     {return VARIADIC;}
 "STEP"                    {return STEP;} // Added for BASIC
-"FALSE" | "TRUE" {yylval.boolval = strcmp(yytext, "TRUE") == 0; return BOOL_LITERAL;}
-
-/* Below: Kept from old lexer, not sure if needed */
-"{" {return LBRACE;}
-"}" {return RBRACE;}
-"..." {return VARIADIC;}
-/* Above: Kept from old lexer, not sure if needed */
-
+"FALSE" | "TRUE" {yylval.boolval = strcmp(yytext, "TRUE") == 0; return BOOL_LITERAL;} // Adjusted for BASIC (instead of lowercase)
 [0-9]+ {yylval.intval = atoi(yytext); return INT_LITERAL;}
 ([0-9]+[.])?[0-9]+ {yylval.fltval = atof(yytext); return FLOAT_LITERAL;}
 
