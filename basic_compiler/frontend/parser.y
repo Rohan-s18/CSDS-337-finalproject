@@ -121,7 +121,7 @@ varDecs: varDecs varDec COLON { // LET A : LET B = 5 : LET C
 
 // E.g., DECLARE FUNCTION add (a AS INTEGER, b AS SINGLE) AS INTEGER
 // TODO: adjust params to allow "AS type"
-funDec: DECLARE FUNCTION ID LPAREN params RPAREN AS type{
+funDec: DECLARE FUNCTION ID LPAREN params RPAREN AS type EOL{
   auto parameters = ASTFunctionParameters();
   bool variadic = false;
   for(auto p : *$5) { //params
@@ -139,7 +139,7 @@ FUNCTION add (a AS INTEGER, b AS SINGLE)
     add = a + b
 END FUNCTION 
 */
-funDef: FUNCTION ID LPAREN params RPAREN AS type varDecs stmts END FUNCTION {
+funDef: FUNCTION ID LPAREN params RPAREN AS type EOL varDecs EOL stmts END FUNCTION {
   /* Fill in this block. (This will be the largest one)
    * You can follow these steps to create the function and assign its behavior correctly:
    * - First, change the vector "stmts" into an ASTStatementBlock (this will need to be a unique pointer).
@@ -149,7 +149,7 @@ funDef: FUNCTION ID LPAREN params RPAREN AS type varDecs stmts END FUNCTION {
 
   auto statements = new ASTStatementBlock();
   //change into block
-  for(auto s : *$9){ //stmts
+  for(auto s : *$11){ //stmts
     statements->statements.push_back(std::unique_ptr<ASTStatement>(s));
   }
   //parameters and variadic assigned
@@ -163,7 +163,7 @@ funDef: FUNCTION ID LPAREN params RPAREN AS type varDecs stmts END FUNCTION {
   }
   //function stack variable
   auto f = ast.AddFunction($2, std::unique_ptr<VarType>($7), std::move(parameters), variadic); //ID, type
-  for(auto p: *$8){ //varDecs
+  for(auto p: *$9){ //varDecs
     f->AddStackVar(std::move(*p));
   }
   //use define
@@ -183,10 +183,7 @@ paramList: paramList COMMA ID AS type { // This works similarly to varDecs
   $$->push_back(nullptr); // Using a null pointer to indicate a variadic function (see funDec)
  };
 
- //TODO: Rest Below///////////////////////////////////////////////////////////////////////////////////////////
-
-
-stmt: exprStmt {$$ = $1;} | LBRACE stmts RBRACE {
+stmt: exprStmt {$$ = $1;} | EOL stmts EOL { // THESE EOLS are in place of brackets
   //"stmts" is a vector of plain pointers to statements. We convert it to a statement block as follows:
   auto statements = new ASTStatementBlock();
   for(auto s : *$2) {
@@ -195,7 +192,9 @@ stmt: exprStmt {$$ = $1;} | LBRACE stmts RBRACE {
   $$ = statements;
  }| selStmt {$$ = $1;} | iterStmt {$$ = $1;} | jumpStmt {$$ = $1;} ; // Strictly speaking, these {$$ = $1}'s are unnecessary (bison does it for you).
 
-exprStmt: expr SEMICOLON {
+ //TODO: Rest Below///////////////////////////////////////////////////////////////////////////////////////////
+
+exprStmt: expr SEMICOLON { //TODO: not sure how to deal with this rn
   $$ = $1; //implicit cast expr -> stmt
  } | SEMICOLON {
   $$ = new ASTStatementBlock(); //empty statement = empty block
