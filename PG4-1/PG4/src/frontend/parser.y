@@ -31,7 +31,7 @@
 extern FILE *yyin;
  }
 //test from whcandev
-//garbage comment
+//test comment
 %{
 #include "parser.tab.hh"
 
