@@ -51,7 +51,6 @@ static std::stringstream ss;
 "/"                       {return ARITH_DIV;}
 "MOD"                     {return ARITH_MOD;} // Changed for BASIC
 "..."                     {return VARIADIC;}
-"STEP"                    {return STEP;} // Added for BASIC
 "FALSE" | "TRUE" {yylval.boolval = strcmp(yytext, "TRUE") == 0; return BOOL_LITERAL;} // Adjusted for BASIC (instead of lowercase)
 [0-9]+ {yylval.intval = atoi(yytext); return INT_LITERAL;}
 ([0-9]+[.])?[0-9]+ {yylval.fltval = atof(yytext); return FLOAT_LITERAL;}
