@@ -66,7 +66,7 @@ extern FILE *yyin;
 }
 
 %token ID BOOL_TYPE INT_TYPE FLOAT_TYPE STRING_TYPE VOID_TYPE 
-%token LET DECLARE FUNCTION AS
+%token LET DECLARE FUNCTION AS END
 %token COLON SEMICOLON LPAREN RPAREN COMMA LBRACE RBRACE 
 %token IF THEN ELSE ENDIF WHILE WEND FOR NEXT TO STEP BREAK RETURN 
 %token EQUALS_SIGN LOGICAL_OR LOGICAL_AND LOGICAL_NOT RELOP_GT RELOP_LT RELOP_GE RELOP_LE RELOP_EQ RELOP_NE 
@@ -119,18 +119,6 @@ varDecs: varDecs varDec COLON { // LET A : LET B = 5 : LET C
   $$ = new std::vector<ASTFunctionParameter *>();
  };
 
-/* FROM C COMPILER
-varDec: type ID {
-  //ASTFunctionParameter is just a tuple of a unique pointer to a type and a string (see definition in function.h)
-  $$ = new ASTFunctionParameter(std::unique_ptr<VarType>($1), $2); 
- };
-varDecs: varDecs varDec SEMICOLON {
-  $$ = $1; //We know that varDecs is always a pointer to vector of variables, so we can just copy it and push the next variable
-  $$->push_back($2);
- } | {
-  $$ = new std::vector<ASTFunctionParameter *>();
- }; */
-
 // E.g., DECLARE FUNCTION add (a AS INTEGER, b AS SINGLE) AS INTEGER
 // TODO: adjust params to allow "AS type"
 funDec: DECLARE FUNCTION ID LPAREN params RPAREN AS type{
@@ -146,27 +134,12 @@ funDec: DECLARE FUNCTION ID LPAREN params RPAREN AS type{
   auto f = ast.AddFunction($3, std::unique_ptr<VarType>($8), std::move(parameters), variadic); //ID, type
 };
 
-/* FROM C COMPILER
-funDec: type ID LPAREN params RPAREN SEMICOLON {
-  //create the parameters
-  auto parameters = ASTFunctionParameters();
-  bool variadic = false;
-  for(auto p : *$4) {
-    // The AST uses unique pointers for memory purposes, but bison doesn't work well with those, so the parser uses plain C-style pointers.
-    // To account for this, make sure to dereference the pointers before using.
-    if (p) parameters.push_back(std::move(*p));
-    else variadic = true;
-  }
-  //then make the function
-  auto f = ast.AddFunction($2, std::unique_ptr<VarType>($1), std::move(parameters), variadic);
-}; */
-
 /* E.g., BASIC Function Definition
 FUNCTION add (a AS INTEGER, b AS SINGLE)
     add = a + b
 END FUNCTION 
 */
-funDef: FUNCTION ID LPAREN params RPAREN AS type varDecs stmts {
+funDef: FUNCTION ID LPAREN params RPAREN AS type varDecs stmts END FUNCTION {
   /* Fill in this block. (This will be the largest one)
    * You can follow these steps to create the function and assign its behavior correctly:
    * - First, change the vector "stmts" into an ASTStatementBlock (this will need to be a unique pointer).
@@ -196,46 +169,22 @@ funDef: FUNCTION ID LPAREN params RPAREN AS type varDecs stmts {
   //use define
   f->Define(std::unique_ptr<ASTStatement>(statements));
  };
-
-/* FROM C COMPILER
-funDef: type ID LPAREN params RPAREN LBRACE varDecs stmts RBRACE {
-  auto statements = new ASTStatementBlock();
-  //change into block
-  for(auto s : *$8){
-    statements->statements.push_back(std::unique_ptr<ASTStatement>(s));
-  }
-  //parameters and variadic assigned
-  auto parameters = ASTFunctionParameters();
-  bool variadic = false;
-
-  //keep going until can't add more then make variadic true
-  for(auto p: *$4){
-    if (p) parameters.push_back(std::move(*p));
-    else variadic = true;
-  }
-  //function stack variable
-  auto f = ast.AddFunction($2, std::unique_ptr<VarType>($1), std::move(parameters), variadic);
-  for(auto p: *$7){
-    f->AddStackVar(std::move(*p));
-  }
-  //use define
-  f->Define(std::unique_ptr<ASTStatement>(statements));
- }; */
-
- //TODO: Rest Below///////////////////////////////////////////////////////////////////////////////////////////
   
 params: paramList | {$$ = new std::vector<ASTFunctionParameter *>();};
 
-paramList: paramList COMMA type ID { // This works similarly to varDecs
+paramList: paramList COMMA ID AS type { // This works similarly to varDecs
   $$ = $1;
-  $$->push_back(new ASTFunctionParameter(std::unique_ptr<VarType>($3), $4));
- } | type ID {
+  $$->push_back(new ASTFunctionParameter(std::unique_ptr<VarType>($5), $3)); //type, ID
+ } | ID AS type {
    $$ = new std::vector<ASTFunctionParameter *>();
-   $$->push_back(new ASTFunctionParameter(std::unique_ptr<VarType>($1), $2));
+   $$->push_back(new ASTFunctionParameter(std::unique_ptr<VarType>($3), $1));
  } | paramList COMMA VARIADIC {
   $$ = new std::vector<ASTFunctionParameter *>();
   $$->push_back(nullptr); // Using a null pointer to indicate a variadic function (see funDec)
  };
+
+ //TODO: Rest Below///////////////////////////////////////////////////////////////////////////////////////////
+
 
 stmt: exprStmt {$$ = $1;} | LBRACE stmts RBRACE {
   //"stmts" is a vector of plain pointers to statements. We convert it to a statement block as follows:
