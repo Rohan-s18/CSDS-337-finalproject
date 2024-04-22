@@ -66,7 +66,8 @@ extern FILE *yyin;
 }
 
 %token ID BOOL_TYPE INT_TYPE FLOAT_TYPE STRING_TYPE VOID_TYPE 
-%token SEMICOLON LPAREN RPAREN COMMA LBRACE RBRACE 
+%token LET DECLARATION FUNCTION
+%token COLON SEMICOLON LPAREN RPAREN COMMA LBRACE RBRACE 
 %token IF THEN ELSE ENDIF WHILE WEND FOR NEXT TO STEP BREAK RETURN 
 %token EQUALS_SIGN LOGICAL_OR LOGICAL_AND LOGICAL_NOT RELOP_GT RELOP_LT RELOP_GE RELOP_LE RELOP_EQ RELOP_NE 
 %token ARITH_PLUS ARITH_MINUS ARITH_MULT ARITH_DIV ARITH_MOD VARIADIC 
@@ -93,21 +94,32 @@ program: | decList ;
 decList: decList dec | dec ;
 dec: funDef | funDec ;
 
+// Should be okay for BASIC
 type: BOOL_TYPE {
   $$ = new VarTypeSimple(VarTypeSimple::BoolType);
  }| INT_TYPE {
   $$ = new VarTypeSimple(VarTypeSimple::IntType);
-  /* fill in */
  }| FLOAT_TYPE {
   $$ = new VarTypeSimple(VarTypeSimple::FloatType);
-  /* fill in */
  }| STRING_TYPE {
   $$ = new VarTypeSimple(VarTypeSimple::StringType);
-  /* fill in */
  } | VOID_TYPE {
   $$ = new VarTypeSimple(VarTypeSimple::VoidType);
-  /* fill in */
  };
+
+// E.g., LET INTEGER A (TODO: Make Adjustment to not care about semi colons)
+varDec: LET type ID {
+  //ASTFunctionParameter is just a tuple of a unique pointer to a type and a string (see definition in function.h)
+  $$ = new ASTFunctionParameter(std::unique_ptr<VarType>($2), $3); 
+ };
+varDecs: varDecs varDec COLON { // LET A : LET B = 5 : LET C
+  $$ = $1; //We know that varDecs is always a pointer to vector of variables, so we can just copy it and push the next variable
+  $$->push_back($2);
+ } | {
+  $$ = new std::vector<ASTFunctionParameter *>();
+ };
+
+/* FROM C COMPILER
 varDec: type ID {
   //ASTFunctionParameter is just a tuple of a unique pointer to a type and a string (see definition in function.h)
   $$ = new ASTFunctionParameter(std::unique_ptr<VarType>($1), $2); 
@@ -117,7 +129,8 @@ varDecs: varDecs varDec SEMICOLON {
   $$->push_back($2);
  } | {
   $$ = new std::vector<ASTFunctionParameter *>();
- };
+ }; */
+
 
 funDec: type ID LPAREN params RPAREN SEMICOLON {
   //create the parameters
@@ -156,6 +169,8 @@ funDef: type ID LPAREN params RPAREN LBRACE varDecs stmts RBRACE {
   //use define
   f->Define(std::unique_ptr<ASTStatement>(statements));
 
+
+//TODO: Rest Below///////////////////////////////////////////////////////////////////////////////////////////
   /* Fill in this block. (This will be the largest one)
    * You can follow these steps to create the function and assign its behavior correctly:
    * - First, change the vector "stmts" into an ASTStatementBlock (this will need to be a unique pointer).

@@ -16,7 +16,11 @@ static std::stringstream ss;
 "FLOAT"                   {return FLOAT_TYPE;}
 "STRING"                  {return STRING_TYPE;}
 "VOID"                    {return VOID_TYPE;} 
-"BOOL"                    {return BOOL_TYPE}
+"BOOL"                    {return BOOL_TYPE;}
+"LET"                     {return LET;} // Added for BASIC
+"DECLARE"                 {return DECLARE;} // Added for BASIC
+"FUNCTION"                {return FUNCTION;} // Added for BASIC
+":"                       {return COLON} // Added for BASIC
 ";"                       {return SEMICOLON;}
 "("                       {return LPAREN;}
 ")"                       {return RPAREN;}
