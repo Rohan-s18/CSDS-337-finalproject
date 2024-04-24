@@ -1,0 +1,493 @@
+/*
+    Parser of QBASIC to build Abstruct Syntax Tree
+
+    * Copyright (C) 2012  microcai <microcai@fedoraproject.org>
+
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 3 of the License, or (at your option) any later version.
+
+    This library is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+%skeleton "lalr1.cc"
+%define api.namespace qb
+//%define api.position.type location
+
+%{
+
+/* Include main header file. */
+#include "qbc.h"
+#include "ast.hpp"
+#include "parser.hpp"
+
+extern	StatementAST * program;
+
+extern int yylex(qb::parser::semantic_type * yylval_param );
+
+extern int yylineno;
+
+//#define debug printf
+#define debug(...)
+
+/* Global variables. */
+bool useDefautSubMain = true;	/* shall we treat the while file as an sub main ? */
+
+int in_loop = 0;                /* in loop? */
+
+/* Local variables. */
+int continue_corrections = 0;   /* continue corrections */
+int unclosed_dos = 0;           /* unclosed "if" count */
+int unclosed_fors = 0;          /* unclosed "for" count */
+int unclosed_ifs = 0;           /* unclosed "if" count */
+int unclosed_repeats = 0;       /* unclosed "repeat" count */
+int unclosed_subs = 0;          /* unclosed subroutine count */
+int unclosed_switches = 0;      /* unclosed "switch" count */
+int unclosed_whiles = 0;        /* unclosed "while" count */
+
+void qb::parser::error(const std::string& msg)
+{
+	std::cerr << " at line " << yylineno << msg << std::endl ;
+	exit(1);
+}
+
+%}
+
+%union {
+	char *				string;         /* quoted string */
+	std::string *		id;         /* general symbol */
+	double 				number;        /* double number */
+	long				integer;			/* long number */
+
+	NamedExprAST *		varref;
+	ExprAST*			expression;
+	ExprListAST*		expression_list;
+
+	PrintIntroAST*		printinto;
+
+
+	ExprType *  		exprtype; // name of the type
+	ConstNumberExprAST* number_expression;
+	CallExprAST*		call_function;
+
+    PrintStmtAST*		printstatement;
+	StatementAST*		statement;
+	StatementsAST*		statement_list;
+	AssigmentAST*		variable_assignment;
+	CodeBlockAST*		codeblocks;
+	IFStmtAST * 		if_clause;
+
+	WhileLoopAST* 		while_loop;
+	ForLoopAST*			for_loop;
+
+	VariableDimAST*		dim_item;
+	VariableDimList*	struct_item_list;
+	StrucDimAST*		structdim;
+
+	ArgumentDimsAST*	arg_list;
+	FunctionDimAST*		function_definition;
+
+	PrintIntroAST *print_intro;
+	std::string 	*cppstring;
+}
+
+%token  tEOPROG
+
+// operators
+%left tOR
+%left tAND
+%right tNOT
+%left tNEQ
+%left tGEQ
+%left tLEQ
+%left tLTN
+%left tGTN
+%left tEQU
+%left '-' '+'
+%left '*' '/' tMOD
+%right UMINUS UPLUS
+%left tPOW
+
+%nonassoc tDREF
+%nonassoc '.'
+
+//keywords
+%token tNEWLINE
+
+%token tAS
+%token tSUB
+%token tSUBEND
+
+%token tFUNCTION
+%token tFUNCTIONEND
+%token tRETURN
+%token tLET tPRINT
+%token tARRAYDIM tDIM
+%token tSTRUCTDIM
+%token tENDSTRUCDIM
+
+%token tIF tTHEN tENDIF tELSE tELSEIF
+%token tWHILE tENDWHILE
+
+%token tFOR tENDFOR tTO tSTEP
+
+// datatype built-in
+%token tLONG tSTR
+
+// misc
+%token <id>		tID
+%token <integer> tInteger
+%token <string>	tSTRING
+%token <number> tNUMBER
+
+%type <expression>					expression
+%type <expression_list>				expression_list
+%type <printinto>					printinto
+%type <printstatement>				printstatement
+%type <codeblocks>					lines
+%type <statement_list>				line
+%type <statement_list>				statements
+%type <statement>					statement
+%type <dim_item>					dim_item array_dim
+%type <struct_item_list>			struct_item_list
+%type <structdim>					struct_dim
+%type <arg_list>					arg_list
+%type <function_definition>			sub_definition
+%type <function_definition>			function_definition
+%type <exprtype>					exprtype
+
+%type <varref>						varref
+%type <variable_assignment>			assigment
+
+%type <if_clause>					if_clause
+%type <while_loop>					while_loop
+%type <for_loop>					for_loop
+
+%type <call_function>    			call_function
+
+%%
+
+program: lines tEOPROG {
+			if(useDefautSubMain){
+				debug("program ended , no main()\n");
+				program = new DefaultMainFunctionAST( $1 );
+			}else{
+				program = $1;
+				debug("module ended\n");
+			}
+			YYACCEPT;
+		}
+		| lines statements tEOPROG {
+
+			debug("!!!no new line at the end of file!!!\n"); exit(1);
+			if(useDefautSubMain){
+				debug("program ended\n");
+				program = new DefaultMainFunctionAST( $1 );
+			}else{
+				program = $1;
+				debug("module ended\n");
+			}
+			YYACCEPT;
+		}
+		;
+
+lines: lines line {
+					$$ = $1;
+					if(!$1){
+						$1 = $$ = new CodeBlockAST;
+					}
+					if($2){
+						$$->addchild($2);
+					}else{
+					}
+	}
+	| line {
+		$$ = 0;
+		if($1){
+			$$ = new CodeBlockAST; 	$$->addchild($1);
+		}
+	} ;
+
+line: statements tNEWLINE { $$=$1;  }
+	| statement tNEWLINE {
+		if(!$1){debug("statement nil\n");}
+		$$ = new StatementsAST ; $$->push_back(StatementASTPtr($1));
+	}
+	| tNEWLINE { $$ = 0;}
+	| expression tNEWLINE {
+			ExprStmtAST * callstmt =  new ExprStmtAST( $1 );
+			$$ = new StatementsAST ;
+			$$->push_back( StatementASTPtr(callstmt)  );
+	}
+	;
+
+statements : statements comma_or_colon statement {  $$ = $1; $$->push_back(StatementASTPtr($3)); }
+		| statement comma_or_colon statement {
+				$$ = new StatementsAST ;
+				$$->push_back(StatementASTPtr($1));
+				$$->push_back(StatementASTPtr($3));
+		}
+		;
+
+statement: printstatement { $$ = $1; }
+		| dim_item { $$ = $1; }
+		| array_dim { $$ = $1; }
+		| assigment {$$= $1;}
+		| tLET assigment { $$ = $2;}
+		| tRETURN expression { $$ = new ReturnAST($2);}
+		| if_clause {$$= $1;}
+		| while_loop {$$= $1;}
+		| for_loop {$$= $1;}
+		| sub_definition  {$$= $1;}
+		| function_definition  {$$= $1;}
+	//	| call_function ':'{ $$ = new CallStmtAST($1); }
+		| expression comma_or_colon { /*TODO*/debug("here====3====\n"); exit(1);	}
+		;
+
+exprtype: tLONG	{
+		$$ = new ExprType (NumberExprTypeAST::GetNumberExprTypeAST());
+	}
+	| tSTR {
+		$$ = new ExprType (StringExprTypeAST::GetStringExprTypeAST());
+	}
+	| tID {
+		debug("define as user type not supported\n");
+		exit(1);
+	}
+	;
+
+printstatement:
+	tPRINT  printinto  expression_list  {
+
+		$3->Append( new EmptyExprAST );
+		$$ = new PrintStmtAST( $2, $3 );
+
+		debug("got print1 done\n");
+	}
+	|tPRINT printinto  expression_list ',' {
+		$$ = new PrintStmtAST( $2, $3 );
+	}
+	|tPRINT  printinto  expression_list ';' {
+		$$ = new PrintStmtAST( $2, $3 );
+	}
+	|tPRINT  printinto {
+		ExprListAST * exprList = new ExprListAST;
+		exprList->Append( new EmptyExprAST );
+		$$ = new PrintStmtAST( $2, exprList );
+	}
+	;
+
+printinto: '#' tInteger ','  { debug("print has got itger\n") ;}
+	| /*empty*/	{ $$ = 0;}
+	;
+
+expression_list: expression_list ',' expression { $$ = $1 ; $$->Append($3); }
+	| expression {
+		$$ =  new ExprListAST;
+		$$->Append($1);
+	}
+	;
+
+expression: call_function
+		| '(' expression ')' { $$ = $2 ;}
+		| expression '+' expression {   $$ = new CalcExprAST( $1, OPERATOR_ADD , $3 );  }
+		| expression '-' expression {   $$ = new CalcExprAST( $1, OPERATOR_SUB , $3 );  }
+		| expression '*' expression {   $$ = new CalcExprAST( $1, OPERATOR_MUL , $3 );  }
+		| expression '/' expression {   $$ = new CalcExprAST( $1, OPERATOR_DIV , $3 );  }
+		| expression tLTN expression {   $$ = new CalcExprAST( $1, OPERATOR_LESS , $3 );  }
+		| expression tLEQ expression {   $$ = new CalcExprAST( $1, OPERATOR_LESSEQU , $3 );  }
+		| expression tGTN expression {   $$ = new CalcExprAST( $1, OPERATOR_GREATER , $3 );  }
+		| expression tGEQ expression {   $$ = new CalcExprAST( $1, OPERATOR_GREATEREQUL , $3 );  }
+		| expression tEQU expression {   $$ = new CalcExprAST( $1, OPERATOR_EQUL , $3 );  }
+		| expression '=' expression {   $$ = new CalcExprAST( $1, OPERATOR_EQUL , $3 );  }
+
+ 		| varref
+		| tInteger  {
+			$$ = new ConstNumberExprAST( $1 );
+		}
+		| tSTRING {
+			$$ = new ConstStringExprAST($1);
+		}
+		| '-' expression {
+			ExprAST* zero = new ConstNumberExprAST(0);
+			$$ = new CalcExprAST(zero, OPERATOR_SUB, $2);
+		}
+		;
+
+assigment: varref '=' expression {
+		//VariableExprAST * varref = new VariableExprAST($1);
+		$$ = new AssigmentAST($1, $3);
+	};
+
+call_function:
+		varref '('  ')' {
+			$$ = new CallExprAST($1);
+			debug("functioncall %s with no arg\n", $1->ID->ID.c_str());
+		}
+		| varref  '(' expression_list ')' {
+			 $$ = new CallExprAST($1 , $3 );
+		};
+
+varref:	expression '.' tID {
+		debug("ref menber %s . %s , not supported yet\n" );
+		exit(1);
+	}
+	| expression tDREF  tID  { exit(1); }
+	| tID {
+		$$ = new VariableExprAST(  new ReferenceAST( $1 ));
+	}
+	|call_function
+	;
+
+comma_or_colon: ':' | ';';
+
+seperator:
+		tNEWLINE
+		| comma_or_colon
+		;
+
+array_dim : tARRAYDIM tID tAS exprtype {
+
+		debug("definning %s as array\n",$2->c_str());
+
+		$$ = new VariableDimAST( *$2  , ArrayExprTypeAST::create(* $4) );
+	};
+
+struct_item_list: struct_item_list seperator tID tAS exprtype {
+		$$->push_back( VariableDimASTPtr(new  VariableDimAST( *$3  , * $5 ) ));
+	}
+	| tID tAS exprtype {
+
+		$$ = new std::vector<VariableDimASTPtr>;
+		$$->push_back( VariableDimASTPtr(new  VariableDimAST( *$1  , * $3 ) ));
+
+	}
+	;
+
+dim_item: tDIM tID tAS exprtype {
+		$$ = new VariableDimAST( *$2  , * $4 );
+	}
+	|tDIM tID {
+		$$ = new VariableDimAST( *$2  , NumberExprTypeAST::GetNumberExprTypeAST() );
+	};
+
+struct_dim: tSTRUCTDIM tID tNEWLINE
+				struct_item_list tNEWLINE
+			tENDSTRUCDIM {
+				$$ = new StrucDimAST(*$2,$4);
+				debug("definning struct %s\n",$2->c_str());
+			};
+
+/*****************************************
+ * here goes function_definition
+ *****************************************/
+
+function_definition: tFUNCTION tID '(' arg_list ')' tAS exprtype tNEWLINE
+						lines
+				tFUNCTIONEND {
+					useDefautSubMain = false;
+
+					$$ = new FunctionDimAST(*$2,
+											ExprTypeASTPtr(new CallableExprTypeAST(*$7)),
+											$4);
+
+					$$->body = CodeBlockASTPtr($9);
+				}
+				|tFUNCTION tID '(' arg_list ')' tNEWLINE
+					lines
+				tFUNCTIONEND {
+					useDefautSubMain = false;
+					$$ = new FunctionDimAST(*$2,
+											ExprTypeASTPtr(new CallableExprTypeAST(NumberExprTypeAST::GetNumberExprTypeAST())),
+											$4);
+
+					$$->body = CodeBlockASTPtr($7);
+				}
+				;
+
+sub_definition: tSUB  tID  '(' arg_list ')'
+				lines
+			tSUBEND {
+				useDefautSubMain = false;
+				debug("!!SUB %s defined with arg !!\n",$2->c_str());
+
+				$$ = new FunctionDimAST( *$2,
+										 ExprTypeASTPtr(new CallableExprTypeAST(VoidExprTypeAST::GetVoidExprTypeAST())),
+										 $4); //delete $2;
+				$6->parent = $4;
+				$$->body = CodeBlockASTPtr($6);
+			}
+		  ;
+
+arg_list:{ $$ = 0; }
+	|arg_list ',' tID tAS exprtype {
+		$$ = $1;
+		$$->addchild( new ArgumentDimAST( *$3  , * $5 ) );
+	}
+	| tID tAS exprtype {
+		debug("definning %s is type %p as arg\n",$1->c_str(), $3);
+		$$ = new ArgumentDimsAST ;
+		$$->addchild(new ArgumentDimAST( *$1  , * $3 ));
+	}
+	;
+
+
+//*****************************************/
+//* here goes Control Flow Statements
+//*****************************************/
+
+		//*****************************************/
+		//* if
+		//*****************************************/
+if_clause: tIF  expression tTHEN statement {
+			$$ = new IFStmtAST( ExprASTPtr($2));
+			$$->_then = CodeBlockASTPtr(new CodeBlockAST($4));
+	}
+	|	tIF  expression tTHEN seperator
+ 			lines
+		tENDIF {
+			$$ = new IFStmtAST( ExprASTPtr($2));
+			$$->_then = CodeBlockASTPtr($5);
+		}
+	|	tIF expression tTHEN seperator
+ 			lines
+ 		tELSE
+			lines
+		tENDIF  {
+			$$ = new IFStmtAST( ExprASTPtr($2));
+			$$->_then = CodeBlockASTPtr($5);
+			$$->_else = CodeBlockASTPtr($7);
+		}
+;
+
+		//*****************************************/
+		//* While
+		//*****************************************/
+
+while_loop: tWHILE expression seperator
+			lines
+		tENDWHILE {
+			$$ = new WhileLoopAST( ExprASTPtr($2) , $4);
+		};
+
+		//*****************************************/
+		//* For
+		//*****************************************/
+for_loop: tFOR varref '=' expression tTO expression optstep  tNEWLINE
+				lines
+			tENDFOR {
+				debug("got for loop");
+				$$ = new ForLoopAST($2, $4,$6, 0 ,$9);
+			}
+		;
+
+optstep	: /*empty*/
+		|tSTEP expression { debug("step");}
+		;
