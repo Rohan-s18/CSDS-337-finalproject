@@ -86,7 +86,8 @@ extern FILE *yyin;
 %type <type> type
 %type <rel> relop
 
-%expect 1 // Shift/reduce conflict when resolving the if/else production; okay
+// IGNORE CONFLICTS FOR NOW
+//%expect 1 // Shift/reduce conflict when resolving the if/else production; okay
 
 %%
  //AST does not support global variables, so the only declarations are functions
@@ -244,13 +245,15 @@ END SUB
 
 main */
 
+// TODO: ADD FOR LOOP SUPPORT
 iterStmt: WHILE expr EOL stmt {
   $$ = new ASTStatementWhile(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatement>($4));
- } | FOR stmt TO INT_LITERAL EOL stmt EOL NEXT ID {
-  //TODO, REFACTOR FOR TO SUPPORT THIS
-  //ASTStatementFor() - BODY (stmt), initialize (stmt), condition (expr), increment (stmt)
-  $$ = new ASTStatementFor(std::unique_ptr<ASTStatement>($6), std::unique_ptr<ASTStatement>($3), std::unique_ptr<ASTExpression>($5), std::unique_ptr<ASTStatement>($7));
- }; //TODO, ADD FOR LOOP SUPPORT FOR: FOR stmt TO INT_LITERAL STEP INT_LITERAL...
+};
+//  } | FOR stmt TO INT_LITERAL EOL stmt EOL NEXT ID {
+//   //TODO, REFACTOR FOR TO SUPPORT THIS
+//   //ASTStatementFor() - BODY (stmt), initialize (stmt), condition (expr), increment (stmt)
+//   $$ = new ASTStatementFor(std::unique_ptr<ASTStatement>($6), std::unique_ptr<ASTStatement>($3), std::unique_ptr<ASTExpression>($5), std::unique_ptr<ASTStatement>($7));
+//  }; //TODO, ADD FOR LOOP SUPPORT FOR: FOR stmt TO INT_LITERAL STEP INT_LITERAL...
 
 /* OLD FOR GRAMMAR IMPLEMENTATION FROM C COMPILER
 iterStmt: WHILE LPAREN expr RPAREN stmt {
@@ -260,19 +263,17 @@ iterStmt: WHILE LPAREN expr RPAREN stmt {
  };
 */
 
-
-//TODO: Rest Below///////////////////////////////////////////////////////////////////////////////////////////
 /* TODO: Remove SEMICOLONS here, and potentially change ordering to try and match longest sequence first */
-jumpStmt: RETURN SEMICOLON {
+jumpStmt: RETURN EOL {
   auto retStmt = new ASTStatementReturn();
   retStmt->returnExpression = std::unique_ptr<ASTExpression>(nullptr);
   $$ = retStmt;
   //return using expr
- }| RETURN expr SEMICOLON {
+ }| RETURN expr EOL {
     auto retStmt = new ASTStatementReturn();
     retStmt->returnExpression = std::unique_ptr<ASTExpression>($2);
     $$ = retStmt;
- } | BREAK SEMICOLON {
+ } | BREAK EOL {
     //implemented new break class - yay!
     $$ = new ASTStatementBreak();
  }; /* TODO: There should also be break statements here, but they are not implemented in the AST */

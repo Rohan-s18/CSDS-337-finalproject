@@ -21,7 +21,7 @@ static std::stringstream ss;
 "DECLARE"                 {return DECLARE;} // Added for BASIC
 "FUNCTION"                {return FUNCTION;} // Added for BASIC
 "END"                     {return END;} // Added for BASIC
-":"                       {return COLON} // Added for BASIC
+":"                       {return COLON;} // Added for BASIC
 ";"                       {return SEMICOLON;}
 "("                       {return LPAREN;}
 ")"                       {return RPAREN;}
