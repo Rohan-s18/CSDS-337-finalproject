@@ -1,3 +1,9 @@
+DECLARE FUNCTION printf (fmt AS STRING, ...) AS INTEGER
 FUNCTION add (a AS INTEGER, b AS SINGLE) AS FLOAT
     RETURN a + b
+END FUNCTION
+
+FUNCTION main () AS INTEGER
+    printf("%f\n", add(3, 7.0))
+    RETURN 0
 END FUNCTION
