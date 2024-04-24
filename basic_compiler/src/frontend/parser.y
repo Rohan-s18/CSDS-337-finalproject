@@ -242,11 +242,13 @@ main */
 iterStmt: WHILE expr stmt WEND {
   $$ = new ASTStatementWhile(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatement>($3));
 };
-//  } | FOR stmt TO INT_LITERAL EOL stmt EOL NEXT ID {
-//   //TODO, REFACTOR FOR TO SUPPORT THIS
-//   //ASTStatementFor() - BODY (stmt), initialize (stmt), condition (expr), increment (stmt)
-//   $$ = new ASTStatementFor(std::unique_ptr<ASTStatement>($6), std::unique_ptr<ASTStatement>($3), std::unique_ptr<ASTExpression>($5), std::unique_ptr<ASTStatement>($7));
-//  }; //TODO, ADD FOR LOOP SUPPORT FOR: FOR stmt TO INT_LITERAL STEP INT_LITERAL...
+// TODO, IMPLEMENT FOR LOOPS 
+/* | FOR stmt TO INT_LITERAL stmt NEXT ID {
+  // ASTStatementFor() - BODY (stmt), initialize (stmt), condition (expr), increment (stmt)
+  $$ = new ASTStatementFor(std::unique_ptr<ASTStatement>($5), std::unique_ptr<ASTStatement>($2), std::unique_ptr<ASTExpression>(new ASTExpressionComparison("<=", $7, $4)), std::unique_ptr<ASTStatement>(new ASTExpressionAssignment($7, (*$7 + 1))));
+};  */
+
+//TODO, ADD FOR LOOP SUPPORT FOR: FOR stmt TO INT_LITERAL STEP INT_LITERAL...
 
 /* OLD FOR GRAMMAR IMPLEMENTATION FROM C COMPILER
 iterStmt: WHILE LPAREN expr RPAREN stmt {
