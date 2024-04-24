@@ -1,4 +1,3 @@
-FUNCTION add (a AS INTEGER, b AS SINGLE) AS INTEGER
-    add = a + b
+FUNCTION add (a AS INTEGER, b AS SINGLE) AS FLOAT
+    RETURN a + b
 END FUNCTION
-add(3, 7.0)
