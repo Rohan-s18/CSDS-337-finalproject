@@ -109,9 +109,9 @@ type: BOOL_TYPE {
  };
 
 // E.g., LET INTEGER A (TODO: Make Adjustment to not care about semi colons)
-varDec: LET type ID {
+varDec: LET ID AS type{
   //ASTFunctionParameter is just a tuple of a unique pointer to a type and a string (see definition in function.h)
-  $$ = new ASTFunctionParameter(std::unique_ptr<VarType>($2), $3); 
+  $$ = new ASTFunctionParameter(std::unique_ptr<VarType>($4), $2); 
  };
 varDecs: varDecs varDec { //TRYING WTIHOUT EOL
   $$ = $1; //We know that varDecs is always a pointer to vector of variables, so we can just copy it and push the next variable
@@ -240,7 +240,7 @@ END SUB
 main */
 
 // TODO: ADD FOR LOOP SUPPORT
-iterStmt: WHILE expr stmt {
+iterStmt: WHILE expr stmt WEND {
   $$ = new ASTStatementWhile(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatement>($3));
 };
 //  } | FOR stmt TO INT_LITERAL EOL stmt EOL NEXT ID {

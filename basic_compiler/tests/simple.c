@@ -1,3 +1,3 @@
-FUNCTION main ()
-    main = 0
+FUNCTION main () AS INTEGER
+    RETURN 0
 END FUNCTION
