@@ -14,7 +14,7 @@ static std::stringstream ss;
 [ \t\n]               ;  /* Ignores Whitespace */
 "INTEGER"                 {return INT_TYPE;} // These were adjusted for BASIC
 "FLOAT"                   {return FLOAT_TYPE;}
-"SINGLE"                  {return FLOAT_TYPE;} // Alternative Single Float for BASIC (TODO: Validate This!)
+"SINGLE"                  {return FLOAT_TYPE;} // Alternative Single Float for BASIC 
 "STRING"                  {return STRING_TYPE;}
 "VOID"                    {return VOID_TYPE;} 
 "BOOL"                    {return BOOL_TYPE;}

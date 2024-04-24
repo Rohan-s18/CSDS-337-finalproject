@@ -208,7 +208,6 @@ ELSE
     ' statements to execute if condition is false
 END IF 
 */
-//NOT SURE IF EOLs ARE CORRECT HERE
 selStmt: IF expr THEN stmt ENDIF { 
   $$ = new ASTStatementIf(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatement>($4), std::unique_ptr<ASTStatement>(nullptr));
  } | IF expr THEN stmt ELSE stmt ENDIF {
