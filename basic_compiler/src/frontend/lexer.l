@@ -11,6 +11,7 @@ static std::stringstream ss;
 %x strlit
 
 %%
+[ \t\n]               ;  /* Ignores Whitespace */
 "INTEGER"                 {return INT_TYPE;} // These were adjusted for BASIC
 "FLOAT"                   {return FLOAT_TYPE;}
 "SINGLE"                  {return FLOAT_TYPE;} // Alternative Single Float for BASIC (TODO: Validate This!)
@@ -60,8 +61,6 @@ static std::stringstream ss;
 "FALSE" | "TRUE" {yylval.boolval = strcmp(yytext, "TRUE") == 0; return BOOL_LITERAL;} // Adjusted for BASIC (instead of lowercase)
 [0-9]+ {yylval.intval = atoi(yytext); return INT_LITERAL;}
 ([0-9]+[.])?[0-9]+ {yylval.fltval = atof(yytext); return FLOAT_LITERAL;}
-\n                        { return EOL; }
-[ \t\n]               ;  /* Ignores Whitespace */
 
 
 \"                  { BEGIN strlit; ss.str(std::string()); }

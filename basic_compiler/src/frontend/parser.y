@@ -113,7 +113,7 @@ varDec: LET type ID {
   //ASTFunctionParameter is just a tuple of a unique pointer to a type and a string (see definition in function.h)
   $$ = new ASTFunctionParameter(std::unique_ptr<VarType>($2), $3); 
  };
-varDecs: varDecs varDec EOL {
+varDecs: varDecs varDec { //TRYING WTIHOUT EOL
   $$ = $1; //We know that varDecs is always a pointer to vector of variables, so we can just copy it and push the next variable
   $$->push_back($2);
  } | {
@@ -122,7 +122,7 @@ varDecs: varDecs varDec EOL {
 
 // E.g., DECLARE FUNCTION add (a AS INTEGER, b AS SINGLE) AS INTEGER
 // TODO: adjust params to allow "AS type"
-funDec: DECLARE FUNCTION ID LPAREN params RPAREN AS type EOL{
+funDec: DECLARE FUNCTION ID LPAREN params RPAREN AS type { //TRYING WITHOUT EOL
   auto parameters = ASTFunctionParameters();
   bool variadic = false;
   for(auto p : *$5) { //params
@@ -141,9 +141,7 @@ FUNCTION add (a AS INTEGER, b AS SINGLE)
 END FUNCTION 
 */
 funDef: FUNCTION ID LPAREN params RPAREN AS type varDecs stmts END_FUNCTION {
-  std::cout << "i'm here" << std::endl;
-  std::cout << "Value of $2: " << $2 << std::endl;
-  std::cout << "Value of $9: " << $9 << std::endl;
+  // std::cout << "i'm here" << std::endl;
   auto statements = new ASTStatementBlock();
   //change into block
   for(auto s : *$9){ //stmts
@@ -189,9 +187,9 @@ stmt: exprStmt {$$ = $1;} | stmts { // THESE EOLS are in place of brackets
   $$ = statements;
  }| selStmt {$$ = $1;} | iterStmt {$$ = $1;} | jumpStmt {$$ = $1;} ; // Strictly speaking, these {$$ = $1}'s are unnecessary (bison does it for you).
 
-exprStmt: expr EOL { //Replaced SEMICOLON with EOL
+exprStmt: expr { //Replaced SEMICOLON with EOL (BUT TRYING WITHOUT EOL)
   $$ = $1; //implicit cast expr -> stmt
- } | EOL {
+ } | { //Removed EOL
   $$ = new ASTStatementBlock(); //empty statement = empty block
  };
 
@@ -260,16 +258,16 @@ iterStmt: WHILE LPAREN expr RPAREN stmt {
 */
 
 /* TODO: Remove SEMICOLONS here, and potentially change ordering to try and match longest sequence first */
-jumpStmt: RETURN EOL {
+jumpStmt: RETURN { //removed EOL
   auto retStmt = new ASTStatementReturn();
   retStmt->returnExpression = std::unique_ptr<ASTExpression>(nullptr);
   $$ = retStmt;
   //return using expr
- }| RETURN expr EOL {
+ }| RETURN expr {
     auto retStmt = new ASTStatementReturn();
     retStmt->returnExpression = std::unique_ptr<ASTExpression>($2);
     $$ = retStmt;
- } | BREAK EOL {
+ } | BREAK {
     //implemented new break class - yay!
     $$ = new ASTStatementBreak();
  }; /* TODO: There should also be break statements here, but they are not implemented in the AST */
