@@ -1,11 +1,10 @@
-FUNCTION main ()
+DECLARE FUNCTION printf (fmt AS STRING, ...) AS INTEGER
+FUNCTION main () AS INTEGER
     LET i AS INTEGER
     i = 0
     WHILE i < 8
-        PRINT "Loop Iteration: "; i
+        printf("LOOP ITERATION: %d\n", i)
         i = i + 1
     WEND
-    main = 0
+    RETURN 0
 END FUNCTION
-
-PRINT main()

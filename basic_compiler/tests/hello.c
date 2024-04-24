@@ -1,12 +1,5 @@
-DECLARE FUNCTION puts (str AS STRING)
-
-FUNCTION puts (str AS STRING)
-    PRINT str
+DECLARE FUNCTION puts (str AS STRING) AS VOID
+FUNCTION main () AS INTEGER
+    puts("Hello World!")
+    RETURN 0
 END FUNCTION
-
-FUNCTION main ()
-    CALL puts("Hello World!")
-    main = 0
-END FUNCTION
-
-PRINT main()
