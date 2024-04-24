@@ -66,7 +66,7 @@ extern FILE *yyin;
 }
 
 %token ID BOOL_TYPE INT_TYPE FLOAT_TYPE STRING_TYPE VOID_TYPE 
-%token LET DECLARE FUNCTION AS END
+%token LET DECLARE FUNCTION AS END_FUNCTION
 %token COLON SEMICOLON LPAREN RPAREN COMMA LBRACE RBRACE 
 %token IF THEN ELSE ENDIF WHILE WEND FOR NEXT TO STEP BREAK RETURN 
 %token EQUALS_SIGN LOGICAL_OR LOGICAL_AND LOGICAL_NOT RELOP_GT RELOP_LT RELOP_GE RELOP_LE RELOP_EQ RELOP_NE 
@@ -113,7 +113,7 @@ varDec: LET type ID {
   //ASTFunctionParameter is just a tuple of a unique pointer to a type and a string (see definition in function.h)
   $$ = new ASTFunctionParameter(std::unique_ptr<VarType>($2), $3); 
  };
-varDecs: varDecs varDec COLON { // LET A : LET B = 5 : LET C
+varDecs: varDecs varDec EOL {
   $$ = $1; //We know that varDecs is always a pointer to vector of variables, so we can just copy it and push the next variable
   $$->push_back($2);
  } | {
@@ -140,17 +140,13 @@ FUNCTION add (a AS INTEGER, b AS SINGLE)
     add = a + b
 END FUNCTION 
 */
-funDef: FUNCTION ID LPAREN params RPAREN AS type EOL varDecs EOL stmts END FUNCTION {
-  /* Fill in this block. (This will be the largest one)
-   * You can follow these steps to create the function and assign its behavior correctly:
-   * - First, change the vector "stmts" into an ASTStatementBlock (this will need to be a unique pointer).
-   * - Then, create the parameters and make the function, as above.
-   * - Add the variables in "varDecs" to the function as stack variables.
-   * - Define the function by the ASTStatementBlock. */
-
+funDef: FUNCTION ID LPAREN params RPAREN AS type varDecs stmts END_FUNCTION {
+  std::cout << "i'm here" << std::endl;
+  std::cout << "Value of $2: " << $2 << std::endl;
+  std::cout << "Value of $9: " << $9 << std::endl;
   auto statements = new ASTStatementBlock();
   //change into block
-  for(auto s : *$11){ //stmts
+  for(auto s : *$9){ //stmts
     statements->statements.push_back(std::unique_ptr<ASTStatement>(s));
   }
   //parameters and variadic assigned
@@ -164,7 +160,7 @@ funDef: FUNCTION ID LPAREN params RPAREN AS type EOL varDecs EOL stmts END FUNCT
   }
   //function stack variable
   auto f = ast.AddFunction($2, std::unique_ptr<VarType>($7), std::move(parameters), variadic); //ID, type
-  for(auto p: *$9){ //varDecs
+  for(auto p: *$8){ //varDecs
     f->AddStackVar(std::move(*p));
   }
   //use define
@@ -184,10 +180,10 @@ paramList: paramList COMMA ID AS type { // This works similarly to varDecs
   $$->push_back(nullptr); // Using a null pointer to indicate a variadic function (see funDec)
  };
 
-stmt: exprStmt {$$ = $1;} | EOL stmts EOL { // THESE EOLS are in place of brackets
+stmt: exprStmt {$$ = $1;} | stmts { // THESE EOLS are in place of brackets
   //"stmts" is a vector of plain pointers to statements. We convert it to a statement block as follows:
   auto statements = new ASTStatementBlock();
-  for(auto s : *$2) {
+  for(auto s : *$1) {
     statements->statements.push_back(std::unique_ptr<ASTStatement>(s));
   }
   $$ = statements;
@@ -215,11 +211,11 @@ ELSE
 END IF 
 */
 //NOT SURE IF EOLs ARE CORRECT HERE
-selStmt: IF expr THEN EOL stmt ENDIF { 
-  $$ = new ASTStatementIf(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatement>($5), std::unique_ptr<ASTStatement>(nullptr));
- } | IF expr THEN EOL stmt ELSE EOL stmt ENDIF {
+selStmt: IF expr THEN stmt ENDIF { 
+  $$ = new ASTStatementIf(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatement>($4), std::unique_ptr<ASTStatement>(nullptr));
+ } | IF expr THEN stmt ELSE stmt ENDIF {
   /* added something, shouldn't have final nullptr */
-   $$ = new ASTStatementIf(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatement>($5), std::unique_ptr<ASTStatement>($8));
+   $$ = new ASTStatementIf(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatement>($4), std::unique_ptr<ASTStatement>($6));
  };
 
 /* BASIC - While Loop
@@ -246,8 +242,8 @@ END SUB
 main */
 
 // TODO: ADD FOR LOOP SUPPORT
-iterStmt: WHILE expr EOL stmt {
-  $$ = new ASTStatementWhile(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatement>($4));
+iterStmt: WHILE expr stmt {
+  $$ = new ASTStatementWhile(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatement>($3));
 };
 //  } | FOR stmt TO INT_LITERAL EOL stmt EOL NEXT ID {
 //   //TODO, REFACTOR FOR TO SUPPORT THIS

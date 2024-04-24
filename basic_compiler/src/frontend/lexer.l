@@ -20,7 +20,7 @@ static std::stringstream ss;
 "LET"                     {return LET;} // Added for BASIC
 "DECLARE"                 {return DECLARE;} // Added for BASIC
 "FUNCTION"                {return FUNCTION;} // Added for BASIC
-"END"                     {return END;} // Added for BASIC
+"END FUNCTION"            {return END_FUNCTION;} // Added for BASIC
 ":"                       {return COLON;} // Added for BASIC
 ";"                       {return SEMICOLON;}
 "("                       {return LPAREN;}
@@ -62,6 +62,7 @@ static std::stringstream ss;
 ([0-9]+[.])?[0-9]+ {yylval.fltval = atof(yytext); return FLOAT_LITERAL;}
 \n                        { return EOL; }
 [ \t\n]               ;  /* Ignores Whitespace */
+
 
 \"                  { BEGIN strlit; ss.str(std::string()); }
 <strlit>[^\\"\n]*   { ss << yytext;}
