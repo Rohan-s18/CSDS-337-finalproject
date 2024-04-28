@@ -178,7 +178,7 @@ paramList: paramList COMMA ID AS type { // This works similarly to varDecs
   $$->push_back(nullptr); // Using a null pointer to indicate a variadic function (see funDec)
  };
 
-stmt: exprStmt {$$ = $1;} | stmts { // THESE EOLS are in place of brackets
+stmt: exprStmt {$$ = $1;} | stmts { // TODO: THESE EOLS are in place of brackets
   //"stmts" is a vector of plain pointers to statements. We convert it to a statement block as follows:
   auto statements = new ASTStatementBlock();
   for(auto s : *$1) {
@@ -243,7 +243,7 @@ iterStmt: WHILE expr stmt WEND {
   $$ = new ASTStatementWhile(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatement>($3));
 };
 // TODO, IMPLEMENT FOR LOOPS 
-/* | FOR stmt TO INT_LITERAL stmt NEXT ID {
+/* | FOR stmt TO INT_LITERAL stmt NEXT ID { // Hayden (for i in range 7)
   // ASTStatementFor() - BODY (stmt), initialize (stmt), condition (expr), increment (stmt)
   $$ = new ASTStatementFor(std::unique_ptr<ASTStatement>($5), std::unique_ptr<ASTStatement>($2), std::unique_ptr<ASTExpression>(new ASTExpressionComparison("<=", $7, $4)), std::unique_ptr<ASTStatement>(new ASTExpressionAssignment($7, (*$7 + 1))));
 };  */
