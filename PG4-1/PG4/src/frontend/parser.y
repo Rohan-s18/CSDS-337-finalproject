@@ -219,7 +219,7 @@ jumpStmt: RETURN SEMICOLON {
  } | BREAK SEMICOLON {
     //implemented new break class
     $$ = new ASTStatementBreak();
- }; /* There should also be break statements here, but they are not implemented in the AST */
+ };
 
 expr: orExpr { $$ = $1;} | ID EQUALS_SIGN expr {
   /* fill in (create an ASTExpressionAssignment) */
