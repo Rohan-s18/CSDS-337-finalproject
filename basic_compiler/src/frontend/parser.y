@@ -239,14 +239,16 @@ END SUB
 main */
 
 // TODO: ADD FOR LOOP SUPPORT
-iterStmt: WHILE expr stmt WEND {
-  $$ = new ASTStatementWhile(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatement>($3));
+// Changed While to support multiple lines of statements
+iterStmt: WHILE expr stmts WEND {
+  $$ = new ASTStatementWhile(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatementBlock>($3));
 };
-// TODO, IMPLEMENT FOR LOOPS 
-/* | FOR stmt TO INT_LITERAL stmt NEXT ID { // Hayden (for i in range 7)
-  // ASTStatementFor() - BODY (stmt), initialize (stmt), condition (expr), increment (stmt)
-  $$ = new ASTStatementFor(std::unique_ptr<ASTStatement>($5), std::unique_ptr<ASTStatement>($2), std::unique_ptr<ASTExpression>(new ASTExpressionComparison("<=", $7, $4)), std::unique_ptr<ASTStatement>(new ASTExpressionAssignment($7, (*$7 + 1))));
-};  */
+
+// assuming that all For loops are the same this will take in tthe first value as the initial value
+iterStmt: FOR ID EQUALS_SIGN expr TO expr stmt NEXT ID {
+  $$ = new ASTStatementFor(std::unique_ptr<ASTStatement>($6), ASTExpressionVariable::Create($2), std::unique_ptr<ASTExpression>($4), std::unique_ptr<ASTExpression>($6));
+};
+
 
 //TODO, ADD FOR LOOP SUPPORT FOR: FOR stmt TO INT_LITERAL STEP INT_LITERAL...
 

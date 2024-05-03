@@ -16,8 +16,8 @@ file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp" "src/*.c")
 execute_process(COMMAND llvm-config --ldflags --system-libs --libs all OUTPUT_VARIABLE LLVM_FLAGS)
 
 # Get rid of whitespace and replace newlines with spaces.
-string(STRIP ${LLVM_FLAGS} LLVM_FLAGS)
-string(REPLACE "\n" " " LLVM_FLAGS  ${LLVM_FLAGS})
+string(STRIP "${LLVM_FLAGS}" LLVM_FLAGS)
+string(REPLACE "\n" " " LLVM_FLAGS "${LLVM_FLAGS}")
 
 #Find bison:
 find_package(BISON)
