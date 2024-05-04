@@ -7,6 +7,7 @@ FUNCTION main () AS INTEGER
         printf("LOOP ITERATION: %d\n", i)
         i = i + 1
         puts("Hello World!")
+        BREAK
     WEND
     RETURN 0
 END FUNCTION

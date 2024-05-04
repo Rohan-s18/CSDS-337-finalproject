@@ -129,6 +129,12 @@ funDec: type ID LPAREN params RPAREN SEMICOLON {
 };
 
 funDef: type ID LPAREN params RPAREN LBRACE varDecs stmts RBRACE {
+  /* 
+   * - First, change the vector "stmts" into an ASTStatementBlock (this will need to be a unique pointer).
+   * - Then, create the parameters and make the function, as above.
+   * - Add the variables in "varDecs" to the function as stack variables.
+   * - Define the function by the ASTStatementBlock. 
+   */
   auto statements = new ASTStatementBlock();
   //change into block
   for(auto s : *$8){
@@ -150,14 +156,9 @@ funDef: type ID LPAREN params RPAREN LBRACE varDecs stmts RBRACE {
   }
   //use define
   f->Define(std::unique_ptr<ASTStatement>(statements));
-
-  /* Fill in this block. (This will be the largest one)
-   * You can follow these steps to create the function and assign its behavior correctly:
-   * - First, change the vector "stmts" into an ASTStatementBlock (this will need to be a unique pointer).
-   * - Then, create the parameters and make the function, as above.
-   * - Add the variables in "varDecs" to the function as stack variables.
-   * - Define the function by the ASTStatementBlock. */
  };
+
+ 
 params: paramList | {$$ = new std::vector<ASTFunctionParameter *>();};
 paramList: paramList COMMA type ID { // This works similarly to varDecs
   $$ = $1;

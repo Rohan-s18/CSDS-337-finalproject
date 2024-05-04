@@ -32,5 +32,5 @@ void ASTStatementBreak::Compile(llvm::Module &mod, llvm::IRBuilder<> &builder, A
 
 std::string ASTStatementBreak::ToString(const std::string &prefix)
 {
-    return prefix + "└── break\n";
+    return "break\n";
 }
