@@ -4,6 +4,6 @@ FUNCTION add (a AS INTEGER, b AS SINGLE) AS FLOAT
 END FUNCTION
 
 FUNCTION main () AS INTEGER
-    printf("%f\n", add(4, 7.0))
+    printf("%f\n", add(3, 7.0))
     RETURN 0
 END FUNCTION

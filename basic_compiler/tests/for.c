@@ -1,9 +1,7 @@
-DECLARE SUB main()
-
-SUB main()
-    FOR i = 0 TO 7
-        PRINT "Loop Iteration: "
+DECLARE FUNCTION printf (fmt AS STRING, ...) AS INTEGER
+FUNCTION main () AS INTEGER
+    FOR i = 0 TO i < 7
+        printf("Test")
     NEXT i
-END SUB
-
-main
+    RETURN 0
+END FUNCTION
