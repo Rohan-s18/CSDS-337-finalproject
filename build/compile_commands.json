@@ -1,0 +1,172 @@
+[
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/ast.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/ast.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/ast.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/demo.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/demo.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/demo.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expression.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expression.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expression.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expressions/addition.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/addition.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/addition.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expressions/and.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/and.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/and.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expressions/assignment.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/assignment.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/assignment.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expressions/bool.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/bool.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/bool.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expressions/bool2Int.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/bool2Int.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/bool2Int.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expressions/call.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/call.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/call.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expressions/comparison.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/comparison.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/comparison.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expressions/division.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/division.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/division.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expressions/float.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/float.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/float.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expressions/float2Int.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/float2Int.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/float2Int.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expressions/int.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/int.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/int.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expressions/int2Bool.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/int2Bool.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/int2Bool.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expressions/int2Float.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/int2Float.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/int2Float.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expressions/multiplication.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/multiplication.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/multiplication.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expressions/negative.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/negative.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/negative.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expressions/or.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/or.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/or.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expressions/string.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/string.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/string.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expressions/sub.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/sub.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/sub.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/expressions/variable.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/variable.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/expressions/variable.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/function.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/function.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/function.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/scopeTable.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/scopeTable.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/scopeTable.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/statements/block.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/statements/block.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/statements/block.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/statements/break.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/statements/break.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/statements/break.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/statements/for.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/statements/for.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/statements/for.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/statements/if.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/statements/if.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/statements/if.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/statements/return.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/statements/return.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/statements/return.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/statements/while.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/statements/while.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/statements/while.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/types/function.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/types/function.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/types/function.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/src/types/simple.cpp.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/types/simple.cpp",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src/types/simple.cpp"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/lex.yy.cc.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/build/lex.yy.cc",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build/lex.yy.cc"
+},
+{
+  "directory": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build",
+  "command": "/usr/bin/clang++  -I/Users/rohansingh/github_repos/CSDS-337-finalproject/basic_compiler/src -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/LLVM-Lab.dir/parser.tab.cc.o -c /Users/rohansingh/github_repos/CSDS-337-finalproject/build/parser.tab.cc",
+  "file": "/Users/rohansingh/github_repos/CSDS-337-finalproject/build/parser.tab.cc"
+}
+]
