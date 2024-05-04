@@ -228,13 +228,12 @@ END FUNCTION
 */
 
 /* BASIC - For Loop 
-DECLARE SUB main()
-
-SUB main()
-    FOR i = 0 TO 7
-        PRINT "Loop Iteration: "; i
-    NEXT i
-END SUB
+FUNCTION main () AS INTEGER
+    FOR i = 0 TO i < 7
+        printf("Test")
+    NEXT i = i + 1
+    RETURN 0
+END FUNCTION
 
 main */
 
@@ -247,33 +246,18 @@ iterStmt: WHILE expr stmts WEND {
   }
 
   $$ = new ASTStatementWhile(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatementBlock>(statements));
-} | FOR ID EQUALS_SIGN expr TO expr stmt NEXT stmt {
-  temp_ID = ASTExpressionVariable::Create($2);
-  $$ = new ASTStatementFor(std::unique_ptr<ASTStatement>($7), //body
-                          std::unique_ptr<ASTStatement>(ASTExpressionAssignment::Create(temp_ID, std::unique_ptr<ASTExpression>($4))), //initialize
-                          std::unique_ptr<ASTExpression>(ASTExpressionComparison::Create(ASTExpressionComparisonType::LessThanOrEqual, temp_ID, std::unique_ptr<ASTExpression>($6))), //condition
-                          std::unique_ptr<ASTStatement>($9)); //increment
+} | FOR stmt TO expr stmt NEXT stmt {
+  $$ = new ASTStatementFor(std::unique_ptr<ASTStatement>($5), std::unique_ptr<ASTStatement>($2), std::unique_ptr<ASTExpression>($4), std::unique_ptr<ASTStatement>($7)); 
 };
 // TODO, IMPLEMENT FOR LOOPS 
 // ASTStatementFor() - BODY (stmt), initialize (stmt), condition (expr), increment (stmt)
-// INITIALIZE STATEMENT:
-// temp_ID = ASTExpressionVariable::Create($2)
-// std::unique_ptr<ASTStatement>(<below>)
-// ASTExpressionAssignment::Create(ID, std::unique_ptr<ASTExpression>($4))
-
-// CONDITION
-// std::unique_ptr<ASTExpression>(<below>)
-// ASTExpressionComparison::Create(ASTExpressionComparisonType::LessThanOrEqual, ID, std::unique_ptr<ASTExpression>($6))
-
-
-//TODO, ADD FOR LOOP SUPPORT FOR: FOR stmt TO INT_LITERAL STEP INT_LITERAL...
-
 /* OLD FOR GRAMMAR IMPLEMENTATION FROM C COMPILER
 iterStmt: WHILE LPAREN expr RPAREN stmt {
   $$ = new ASTStatementWhile(std::unique_ptr<ASTExpression>($3), std::unique_ptr<ASTStatement>($5));
  } | FOR LPAREN stmt COMMA expr COMMA stmt RPAREN stmt {
   $$ = new ASTStatementFor(std::unique_ptr<ASTStatement>($9), std::unique_ptr<ASTStatement>($3), std::unique_ptr<ASTExpression>($5), std::unique_ptr<ASTStatement>($7));
  };
+
 */
 
 /* TODO: Remove SEMICOLONS here, and potentially change ordering to try and match longest sequence first */
