@@ -249,6 +249,7 @@ iterStmt: WHILE expr stmts WEND {
 } | FOR stmt TO expr stmt NEXT stmt {
   $$ = new ASTStatementFor(std::unique_ptr<ASTStatement>($5), std::unique_ptr<ASTStatement>($2), std::unique_ptr<ASTExpression>($4), std::unique_ptr<ASTStatement>($7)); 
 };
+// IM AN IDIOT LETS GO
 // TODO, IMPLEMENT FOR LOOPS 
 // ASTStatementFor() - BODY (stmt), initialize (stmt), condition (expr), increment (stmt)
 /* OLD FOR GRAMMAR IMPLEMENTATION FROM C COMPILER
