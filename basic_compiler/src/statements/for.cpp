@@ -11,8 +11,6 @@ std::unique_ptr<VarType> ASTStatementFor::StatementReturnType(ASTFunction &func)
 
 void ASTStatementFor::Compile(llvm::Module &mod, llvm::IRBuilder<> &builder, ASTFunction &func)
 {
-
-
     auto *funcVal = (llvm::Function *)func.GetVariableValue(func.name);
     auto forLoop = llvm::BasicBlock::Create(builder.getContext(), "forLoop", funcVal);
     auto forLoopBody = llvm::BasicBlock::Create(builder.getContext(), "forLoopBody", funcVal);

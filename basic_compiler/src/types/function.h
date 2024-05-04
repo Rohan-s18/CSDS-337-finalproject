@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../varType.h"
-
 // Type that represents a function.
 class VarTypeFunction : public VarType
 {
@@ -11,7 +10,6 @@ private:
     llvm::Type* funcType = nullptr;
 
 public:
-
     // If the function type is variadic.
     bool varArgs;
 

@@ -197,7 +197,7 @@ stmts: stmts stmt {
   //Here, we just place the statements into a vector. They'll be added to the AST in a parent's code action.
   $$ = $1;
   $$->push_back($2);
- }| {
+ }|{
   $$ = new std::vector<ASTStatement *>();
  };
 
@@ -246,8 +246,12 @@ iterStmt: WHILE expr stmts WEND {
   }
 
   $$ = new ASTStatementWhile(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatementBlock>(statements));
-} | FOR stmt TO expr stmt NEXT stmt {
-  $$ = new ASTStatementFor(std::unique_ptr<ASTStatement>($5), std::unique_ptr<ASTStatement>($2), std::unique_ptr<ASTExpression>($4), std::unique_ptr<ASTStatement>($7)); 
+} | FOR stmt TO expr stmts NEXT stmt {
+  auto statements = new ASTStatementBlock();
+  for(auto s : *$5) {
+    statements->statements.push_back(std::unique_ptr<ASTStatement>(s));
+  }
+  $$ = new ASTStatementFor(std::unique_ptr<ASTStatementBlock>(statements), std::unique_ptr<ASTStatement>($2), std::unique_ptr<ASTExpression>($4), std::unique_ptr<ASTStatement>($7)); 
 };
 // IM AN IDIOT LETS GO
 // TODO, IMPLEMENT FOR LOOPS 
