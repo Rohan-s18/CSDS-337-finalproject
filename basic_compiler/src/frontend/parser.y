@@ -247,9 +247,12 @@ iterStmt: WHILE expr stmts WEND {
   }
 
   $$ = new ASTStatementWhile(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatementBlock>(statements));
-} | FOR ID EQUALS_SIGN expr TO expr stmt NEXT ID {
-  temp_ID = 
-  $$ = new ASTStatementFor(std::unique_ptr<ASTStatement>($7), ASTExpressionVariable::Create($2), std::unique_ptr<ASTExpression>($4), std::unique_ptr<ASTExpression>($6));
+} | FOR ID EQUALS_SIGN expr TO expr stmt NEXT stmt {
+  temp_ID = ASTExpressionVariable::Create($2);
+  $$ = new ASTStatementFor(std::unique_ptr<ASTStatement>($7), //body
+                          std::unique_ptr<ASTStatement>(ASTExpressionAssignment::Create(temp_ID, std::unique_ptr<ASTExpression>($4))), //initialize
+                          std::unique_ptr<ASTExpression>(ASTExpressionComparison::Create(ASTExpressionComparisonType::LessThanOrEqual, temp_ID, std::unique_ptr<ASTExpression>($6))), //condition
+                          std::unique_ptr<ASTStatement>($9)); //increment
 };
 // TODO, IMPLEMENT FOR LOOPS 
 // ASTStatementFor() - BODY (stmt), initialize (stmt), condition (expr), increment (stmt)
@@ -257,9 +260,11 @@ iterStmt: WHILE expr stmts WEND {
 // temp_ID = ASTExpressionVariable::Create($2)
 // std::unique_ptr<ASTStatement>(<below>)
 // ASTExpressionAssignment::Create(ID, std::unique_ptr<ASTExpression>($4))
+
 // CONDITION
-// ASTExpressionComparison::Create(ASTExpressionComparisonType::LessThanOrEqual, ID, )
-// Increment
+// std::unique_ptr<ASTExpression>(<below>)
+// ASTExpressionComparison::Create(ASTExpressionComparisonType::LessThanOrEqual, ID, std::unique_ptr<ASTExpression>($6))
+
 
 //TODO, ADD FOR LOOP SUPPORT FOR: FOR stmt TO INT_LITERAL STEP INT_LITERAL...
 
