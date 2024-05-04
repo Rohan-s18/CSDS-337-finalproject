@@ -66,7 +66,7 @@ extern FILE *yyin;
 }
 
 %token ID BOOL_TYPE INT_TYPE FLOAT_TYPE STRING_TYPE VOID_TYPE 
-%token LET DECLARE FUNCTION AS END_FUNCTION
+%token LET DECLARE FUNCTION AS END_FUNCTION ENDFOR
 %token COLON SEMICOLON LPAREN RPAREN COMMA LBRACE RBRACE 
 %token IF THEN ELSE ENDIF WHILE WEND FOR NEXT TO STEP BREAK RETURN 
 %token EQUALS_SIGN LOGICAL_OR LOGICAL_AND LOGICAL_NOT RELOP_GT RELOP_LT RELOP_GE RELOP_LE RELOP_EQ RELOP_NE 
@@ -208,11 +208,24 @@ ELSE
     ' statements to execute if condition is false
 END IF 
 */
-selStmt: IF expr THEN stmt ENDIF { 
-  $$ = new ASTStatementIf(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatement>($4), std::unique_ptr<ASTStatement>(nullptr));
- } | IF expr THEN stmt ELSE stmt ENDIF {
+selStmt: IF expr THEN stmts ENDIF { 
+  auto statements = new ASTStatementBlock();
+  for(auto s : *$4) {
+    statements->statements.push_back(std::unique_ptr<ASTStatement>(s));
+  }
+  $$ = new ASTStatementIf(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatementBlock>(statements), std::unique_ptr<ASTStatement>(nullptr));
+ } | IF expr THEN stmts ELSE stmts ENDIF {
+  auto statements = new ASTStatementBlock();
+  for(auto s : *$4) {
+    statements->statements.push_back(std::unique_ptr<ASTStatement>(s));
+  }
+
+  auto statements2 = new ASTStatementBlock();
+  for(auto s : *$6) {
+    statements->statements.push_back(std::unique_ptr<ASTStatement>(s));
+  }
   /* added something, shouldn't have final nullptr */
-   $$ = new ASTStatementIf(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatement>($4), std::unique_ptr<ASTStatement>($6));
+  $$ = new ASTStatementIf(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatementBlock>(statements), std::unique_ptr<ASTStatementBlock>(statements2));
  };
 
 /* BASIC - While Loop
@@ -246,7 +259,7 @@ iterStmt: WHILE expr stmts WEND {
   }
 
   $$ = new ASTStatementWhile(std::unique_ptr<ASTExpression>($2), std::unique_ptr<ASTStatementBlock>(statements));
-} | FOR stmt TO expr stmts NEXT stmt {
+} | FOR stmt TO expr stmts NEXT stmt ENDFOR {
   auto statements = new ASTStatementBlock();
   for(auto s : *$5) {
     statements->statements.push_back(std::unique_ptr<ASTStatement>(s));
@@ -276,9 +289,8 @@ jumpStmt: RETURN { //removed EOL
     retStmt->returnExpression = std::unique_ptr<ASTExpression>($2);
     $$ = retStmt;
  } | BREAK {
-    //implemented new break class - yay!
     $$ = new ASTStatementBreak();
- }; /* TODO: There should also be break statements here, but they are not implemented in the AST */
+ }; 
 
 expr: orExpr { $$ = $1;} | ID EQUALS_SIGN expr {
   /* fill in (create an ASTExpressionAssignment) */

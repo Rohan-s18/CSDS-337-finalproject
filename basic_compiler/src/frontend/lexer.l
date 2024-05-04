@@ -35,6 +35,7 @@ static std::stringstream ss;
 "ENDIF"                   {return ENDIF;} // Added for BASIC
 "WHILE"                   {return WHILE;}
 "WEND"                    {return WEND;} // Added for BASIC
+"ENDFOR"                  {return ENDFOR;} // Added for BASIC
 "FOR"                     {return FOR;}
 "NEXT"                    {return NEXT;} // Added for BASIC
 "TO"                      {return TO;} // Added for BASIC

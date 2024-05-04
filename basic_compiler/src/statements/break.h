@@ -19,6 +19,10 @@
 class ASTStatementBreak : public ASTStatement
 {
 public:
-    void Compile(llvm::Module& mod, llvm::IRBuilder<>& builder, ASTFunction& func) override;
-    std::string ToString(const std::string& prefix) override;
+    ASTStatementBreak() {}
+
+    virtual std::unique_ptr<VarType> StatementReturnType(ASTFunction& func) override;
+    virtual void Compile(llvm::Module& mod, llvm::IRBuilder<>& builder, ASTFunction& func) override;
+    virtual std::string ToString(const std::string& prefix) override;
 };
+

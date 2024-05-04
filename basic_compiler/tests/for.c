@@ -5,8 +5,9 @@ FUNCTION main () AS INTEGER
     FOR i = 0 TO i < 7
         printf("Test: %d\n", i)
         IF i == 3 THEN
-            printf("WE HIT THREE!\n")
+            BREAK
         ENDIF 
     NEXT i = i + 1
+    ENDFOR
     RETURN 0
 END FUNCTION
